@@ -13,9 +13,9 @@ periods as columns) from defaults with optional per-period overrides.
 
 import pandas as pd
 
-periods = ["2025A", "2026E", "2027E", "2028E", "2029E"]
+PERIODS = ["2025A", "2026E", "2027E", "2028E", "2029E"]
 
-default_drivers ={
+DEFAULT_DRIVERS ={
     "base_volume": 1_000_000,   #units, 2025A
     "base_asp": 100.0,          #$ per unit
     "volume_growth": 0.05,
@@ -36,7 +36,7 @@ default_drivers ={
     "dividend_payout_pct": 0.0,
 }
 
-def build_driver_frame(period=periods, overrides=None):
+def build_driver_frame(periods=PERIODS, overrides=None):
     """
     Build a DataFrame. One row per driver. One column per period.
     Flat-seeded from default_drivers with optional per period
@@ -45,7 +45,7 @@ def build_driver_frame(period=periods, overrides=None):
     overrides: dict of {driver_name: {period: value}}
         ex: {"volume_growth": {"2027E": 0.04, "2028E": 0.03}}
     """
-    df = pd.DataFrame({period: default_drivers for period in periods})
+    df = pd.DataFrame({period: DEFAULT_DRIVERS for period in periods})
     df.index.name = "driver"
     df.columns.name = "period"
 
