@@ -30,7 +30,7 @@ from src. working_capital import build_working_capital
 
 LINE_ITEMS = [
     "Beginning Cash",
-    "Beginning Term Loan", "Term Load Paydown", "Ending Term Loan",
+    "Beginning Term Loan", "Term Loan Paydown", "Ending Term Loan",
     "Beginning Revolver", "Revolver Draw/(Paydown)", "Ending Revolver",
     "Interest Expense - Term Loan", "Interest Expense - Revolver",
     "Total Interest Expense",
