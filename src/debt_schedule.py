@@ -27,6 +27,7 @@ import pandas as pd
 from src.drivers import build_driver_frame, PERIODS
 from src.income_statement import build_income_statement
 from src. working_capital import build_working_capital
+from src.opening_balances import OPENING_BALANCES
 
 LINE_ITEMS = [
     "Beginning Cash",
@@ -43,9 +44,6 @@ def build_debt_schedule(
         income_statement,
         working_capital,
         periods=PERIODS,
-        beginning_cash=10.0,
-        beginning_term_loan=200.0,
-        beginning_revolver=0.0,
 ):
     """
     Build the debt schedule as a DataFrame.
@@ -63,9 +61,9 @@ def build_debt_schedule(
     for i, period in enumerate(periods):
         if i == 0:
             #Anchor year; treat as actual, no forecasting
-            beg_cash = beginning_cash
-            beg_term_loan = beginning_term_loan
-            beg_revolver = beginning_revolver
+            beg_cash = OPENING_BALANCES["cash"]
+            beg_term_loan = OPENING_BALANCES["term_loan"]
+            beg_revolver = OPENING_BALANCES["revolver"]
 
             term_loan_paydown = 0.0
             ending_term_loan = beg_term_loan

@@ -19,6 +19,7 @@ from src.income_statement import build_income_statement
 from src.working_capital import build_working_capital
 from src.debt_schedule import build_debt_schedule
 from src.equity_schedule import build_equity_schedule
+from src.opening_balances import OPENING_BALANCES, compute_retained_earnings_plug
 
 LINE_ITEMS = [
     "Net Income", "D&A", "Change in AR", "Change in Inventory", "Change in AP",
@@ -39,7 +40,6 @@ def build_cash_flow_statement(
         debt_schedule,
         equity_schedule,
         periods=PERIODS,
-        beginning_cash=10.0,
 ):
     """
     Build the cash flow statement as a DataFrame
@@ -69,8 +69,8 @@ def build_cash_flow_statement(
             common_stock_issuance = 0.0
             cff = 0.0
             net_change_in_cash = 0.0
-            beg_cash = beginning_cash
-            ending_cash = beg_cash
+            beg_cash = OPENING_BALANCES["cash"]
+            ending_cash = OPENING_BALANCES["cash"]
         else:
             prior = periods[i-1]
             net_income = income_statement.loc["Net Income", period]
@@ -135,7 +135,14 @@ if __name__ == "__main__":
     income_statement = build_income_statement(drivers)
     working_capital = build_working_capital(drivers, income_statement)
     debt_schedule = build_debt_schedule(drivers, income_statement, working_capital)
-    equity_schedule = build_equity_schedule(drivers, income_statement)
+    
+    retained_earnings_plug = compute_retained_earnings_plug(
+        working_capital, debt_schedule, PERIODS
+    )
+
+    equity_schedule = build_equity_schedule(
+        drivers, income_statement, beginning_retained_earnings=retained_earnings_plug
+    )
 
     cash_flow_statement = build_cash_flow_statement(
         drivers, income_statement, working_capital, debt_schedule, equity_schedule

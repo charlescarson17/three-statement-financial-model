@@ -13,6 +13,9 @@ Anchor year is treated as an actual balance, not forecasted.
 import pandas as pd
 from src.drivers import build_driver_frame, PERIODS
 from src.income_statement import build_income_statement
+from src.working_capital import build_working_capital
+from src.debt_schedule import build_debt_schedule
+from src.opening_balances import OPENING_BALANCES, compute_retained_earnings_plug
 
 LINE_ITEMS = [
     "Beginning Common Stock", "Common Stock Issuance", "Ending Common Stock",
@@ -24,9 +27,8 @@ LINE_ITEMS = [
 def build_equity_schedule(
         drivers,
         income_statement,
+        beginning_retained_earnings,
         periods=PERIODS,
-        beginning_common_stock=50.0,
-        beginning_retained_earnings=100.0,
 ):
     """
     Build the equity schedule as a DataFrame
@@ -43,7 +45,7 @@ def build_equity_schedule(
     for i, period in enumerate(periods):
         if i == 0:
             #Anchor year; treat as actual, no forecasting
-            beg_common_stock = beginning_common_stock
+            beg_common_stock = OPENING_BALANCES["common_stock"]
             common_stock_issuance = 0.0
             ending_common_stock = beg_common_stock
 
@@ -80,6 +82,15 @@ if __name__ == "__main__":
     #Derive the equity schedule from it
     drivers = build_driver_frame()
     income_statement = build_income_statement(drivers)
-    equity_schedule = build_equity_schedule(drivers, income_statement)
+    working_capital = build_working_capital(drivers, income_statement)
+    debt_schedule = build_debt_schedule(drivers, income_statement, working_capital)
+
+    retained_earnings_plug = compute_retained_earnings_plug(
+        working_capital, debt_schedule, PERIODS
+    )
+
+    equity_schedule = build_equity_schedule(
+        drivers, income_statement, beginning_retained_earnings=retained_earnings_plug
+    )
     print(equity_schedule.round(2))
 
