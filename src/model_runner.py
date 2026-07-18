@@ -106,8 +106,6 @@ if __name__ == "__main__":
     #Run the fully converged model
     #Verify both becks still pass
     results = run_three_statement_model()
-    print(results["income_statement"].round(2))
-    print(results["balance_sheet"].round(2))
     check_balance_sheet_balances(results["balance_sheet"])
     check_cash_flow_ties_to_debt_schedule(results["cash_flow_statement"])
 
