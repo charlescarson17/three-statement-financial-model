@@ -24,6 +24,7 @@ from src.income_statement import build_income_statement
 from src.working_capital import build_working_capital
 from src.debt_schedule import build_debt_schedule
 from src.equity_schedule import build_equity_schedule
+from src.opening_balances import OPENING_BALANCES, compute_retained_earnings_plug
 
 LINE_ITEMS = [
     "Cash", "Accounts Receivable", "Inventory", "Other Current Assets", "Total Current Assets",
@@ -34,44 +35,6 @@ LINE_ITEMS = [
     "Total Liabilities & Equity", "Balance Check",
 ]
 
-def compute_anchor_retained_earnings_plug(
-        working_capital,
-        debt_schedule,
-        periods=PERIODS,
-        beginning_cash=10.0,
-        beginning_common_stock=50.0,
-        beginning_other_current_assets=15.0,
-        beginning_accrued_liabilities=12.0,
-        beginning_ppe_gross=300.0,
-        beginning_accumulated_da=50.0,
-):
-    """
-    Back into the retained earnings figure for the anchor year's balance sheet to balance
-    exactly, given every other opening balance assumptions. 
-    
-    Standard modeling technique: whena full historical balance sheet isn't available, retained
-    earnings is the customary plug since it represents the cumulative effect of all the prior years'
-    undistributed earnings and is the natural account to absorb whatever is needed to make the balance
-    sheet's opening year balance.
-    """
-    anchor = periods[0]
-    ppe_net = beginning_ppe_gross - beginning_accumulated_da
-
-    total_assets = (
-        beginning_cash
-        + working_capital.loc["Accounts Receivable", anchor]
-        + working_capital.loc["Inventory", anchor]
-        + beginning_other_current_assets
-        + ppe_net
-    )
-    total_liabilities = (
-        working_capital.loc["Accounts Payable", anchor]
-        + beginning_accrued_liabilities
-        + debt_schedule.loc["Ending Revolver", anchor]
-        + debt_schedule.loc["Ending Term Loan", anchor]
-    )
-    return total_assets - total_liabilities - beginning_common_stock
-
 
 def build_balance_sheet(
         drivers,
@@ -80,10 +43,6 @@ def build_balance_sheet(
         debt_schedule,
         equity_schedule,
         periods=PERIODS,
-        beginning_other_current_assets=15.0,
-        beginning_accrued_liabillities=12.0,
-        beginning_ppe_gross=300.0,
-        beginning_accumulated_da=50.0,
 ):
     """
     Build the balance sheet as a DataFrame, assembled from every upstream module
@@ -101,10 +60,10 @@ def build_balance_sheet(
     for i, period in enumerate(periods):
         if i == 0:
             #Anchor year treated as actual, no forecasting
-            other_ca = beginning_other_current_assets
-            accrued_liab = beginning_accrued_liabillities
-            ppe_gross = beginning_ppe_gross
-            accumulated_da = beginning_accumulated_da
+            other_ca = OPENING_BALANCES["other_current_assets"]
+            accrued_liab = OPENING_BALANCES["accrued_liabilities"]
+            ppe_gross = OPENING_BALANCES["ppe_gross"]
+            accumulated_da = OPENING_BALANCES["accumulated_da"]
         else:
             prior = periods[i-1]
             #Flat projections
@@ -176,8 +135,8 @@ if __name__ == "__main__":
     working_capital = build_working_capital(drivers, income_statement)
     debt_schedule = build_debt_schedule(drivers, income_statement, working_capital)
     
-    retained_earnings_plug = compute_anchor_retained_earnings_plug(
-        working_capital, debt_schedule
+    retained_earnings_plug = compute_retained_earnings_plug(
+        working_capital, debt_schedule, PERIODS
     )
 
     equity_schedule = build_equity_schedule(
