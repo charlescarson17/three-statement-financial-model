@@ -21,7 +21,7 @@ from src.drivers import build_driver_frame, PERIODS
 
 LINE_ITEMS =[
     "Volume", "ASP", "Revenue", "COGS", "Gross Profit",
-    "SG&A", "R&D", "EBIDTA", "D&A", "EBIT",
+    "SG&A", "R&D", "EBITDA", "D&A", "EBIT",
     "Interest Expense", "Pretax Income", "Tax Expense",
     "Net Income",
 ]
