@@ -6,19 +6,21 @@ Revenue is driven bottoms-up using a volume X ASP driver formula rather than fro
 
 The model self-verifies through an automated balance check (confirms Assets = Liabilities + Equity) in every period. And a cash tie-out check confirms that independently calculated ending cash on from the cash flow statement matches the debt schedule's ending cash from its cash sweep function.
 
-## Quick Start
-git clone https://github.com/charlescarson17/three-statement-financial-model.git
-cd three-statement-financial-model
-python3 -m venv venv
-source venv/bin/activate      # Mac/Linux
-venv\Scripts\activate         # Windows
-pip install -r requirements.txt
-python3 main.py
+##Quick Start
 
-Run the test suite:
+git clone https://github.com/charlescarson17/three-statement-financial-model.git <br>
+cd three-statement-financial-model  <br>
+python3 -m venv venv  <br>
+source venv/bin/activate      # Mac/Linux <br> 
+venv\Scripts\activate         # Windows  <br>
+pip install -r requirements.txt  <br>
+python3 main.py  <br>
+
+Run the test suite: <br> 
 python3 -m pytest -v
 
-## Sample Output
+##Sample Output
+
 ![Income Statement](docs/income_statement.png)
 ![Balance Sheet](docs/balance_sheet.png)
 ![Cash Flow Statement](docs/cash_flow_statement.png)
@@ -40,30 +42,26 @@ python3 -m pytest -v
 
 The model is built as a procedural pipeline. Each module is a calculation function that receives the outputs of upstream modules, performs its individual contribution to the overall model, and returns a DataFrame. This concept matches how a model functions in Excel.
 
-Calculation Order: <br>
-- Opening Balances & Drivers -> 
-- Income Statement -> 
-- Working Capital -> 
-- Debt Schedule -> 
-- Equity Schedule -> 
-- Balance Sheet -> 
-- Cash Flow Statement <br>
-**All looped until interest expense converges**
+Calculation Order:
+Opening Balances & Drivers -> Income Statement -> Working Capital -> Debt Schedule -> Equity Schedule -> Balance Sheet -> Cash Flow Statement  
+***All looped until interest expense converges***
 
-## Architecture Components:
--opening_balances.py -> single source of truth for anchor year balances
--drivers.py -> forecast assumptions (volume,      ASP, margins, DSO/DIO/DPO, rates)
--income_statement.py -> Volume X ASP -> Revenue ->...-> Net Income
--working_capital.py -> AR/Inventory/AP from DSO/DIO/DPO
--debt_schedule.py -> term loan amortization + revolver cash sweep
--equity_schedule.py -> retained earning rollforward
--balance_sheet.py -> assembles all balance sheet inputs into a structured balance sheet, auto-balance check
--cash_flow.py -> independent calculation of CFO/CFI/CFF statements, ties out ending cash to debt schedule
--model_runner.py -> orchestrates the pipeline, resolve circularity of interest expense via an iterative convergence function
--formatting.py -> terminal formatting applied to produced financial statements
--main.py -> main entry point to run entire model
+##Architecture Components:
 
-## Modeling Assumptions & Limitations
+- opening_balances.py -> single source of truth for anchor year balances
+- drivers.py -> forecast assumptions (volume,      ASP, margins, DSO/DIO/DPO, rates)
+- income_statement.py -> Volume X ASP -> Revenue ->...-> Net Income
+- working_capital.py -> AR/Inventory/AP from DSO/DIO/DPO
+- debt_schedule.py -> term loan amortization + revolver cash sweep
+- equity_schedule.py -> retained earning rollforward
+- balance_sheet.py -> assembles all balance sheet inputs into a structured balance sheet, auto-balance check
+- cash_flow.py -> independent calculation of CFO/CFI/CFF statements, ties out ending cash to debt schedule
+- model_runner.py -> orchestrates the pipeline, resolve circularity of interest expense via an iterative convergence function
+- formatting.py -> terminal formatting applied to produced financial statements
+- main.py -> main entry point to run entire model
+
+##Modeling Assumptions & Limitations
+
 **Other Current Assets and Accrued Liabilities held flat at their anchor year levels.** These balances don't scale with revenue or COGS in the same way as working capital in this model.
 
 **Revolver has no maximum draw limit.** Real credit mechanisms have a maximum commitment or borrowing base. The model assumes unconstrained liquidity access.
@@ -73,7 +71,8 @@ Calculation Order: <br>
 **Anchor year is a single historical period.** No multi-year historical reference limits any trend-based judgement.
 
 ##Testing
-Run test:
+
+Run test: <br>
 python3 -m pytest -v
 
 Runs 8 tests covering income statement math, working capital formula accuracy, debt schedule conditions, balance sheet and cash flow checks, and convergence of the iterative function.
