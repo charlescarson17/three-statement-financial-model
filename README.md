@@ -26,19 +26,7 @@ python3 -m pytest -v
 ![Cash Flow Statement](docs/cash_flow_statement.png)
 ![Passed Checks](docs/passed_checks.png)
 
-## Key Design Decisions
-
-**Revenue built from volume X ASP, not a YOY growth rate.** This separates the two distinct inputs of revenue to answer the business question: "Is growth coming from more units sold or from pricing power?".
-
-**Retained earnings act as the anchor year plug.** Without a full historical balance sheet, retained earnings is the standard place to absorb whatever value is needed to make the opening balance sheet balance. Retained earnings is the natural choice since it represents the cumulative effect of all prior years' undistributed earnings.
-
-**Interest expense circularity resolved via iterative convergence.** Interest expense creates a circularity because interest expense depends on the debt balance, which depends on the cash sweep, which depends on net income, which depends on interest expense. This method was chosen over the average-balance method because average debt approximations are common in simplified models. Iterative convergence resembles how Excel's iterative calculation mode resolves the same circular reference. The model feeds each iteration's calculated interest expense into the next iteration until the change between iterations is below a $0.01 tolerance (defined in module).
-
-**Revolve with automatic cash sweep.** Rather than a static debt schedule, the revolver auto-draws if projected cash falls below a defined minimum target and auto-pays with any projected excess cash.
-
-**Single opening balance source of truth.** Anchor year assumptions (cash, PP&E, common stock, etc.) line in one place. This was a design decision rather than having the assumptions be duplicated across multiple modules. This creates real coordination necessary in dynamic real-world models and reduces risk during any assumption updates.
-
-## Architecture Summary
+## Model Summary
 
 The model is built as a procedural pipeline. Each module is a calculation function that receives the outputs of upstream modules, performs its individual contribution to the overall model, and returns a DataFrame. This concept matches how a model functions in Excel.
 
@@ -52,6 +40,18 @@ Calculation Order:
 - Cash Flow Statement
 
 ***All looped until interest expense converges***
+
+## Key Design Decisions
+
+**Revenue built from volume X ASP, not a YOY growth rate.** This separates the two distinct inputs of revenue to answer the business question: "Is growth coming from more units sold or from pricing power?".
+
+**Retained earnings act as the anchor year plug.** Without a full historical balance sheet, retained earnings is the standard place to absorb whatever value is needed to make the opening balance sheet balance. Retained earnings is the natural choice since it represents the cumulative effect of all prior years' undistributed earnings.
+
+**Interest expense circularity resolved via iterative convergence.** Interest expense creates a circularity because interest expense depends on the debt balance, which depends on the cash sweep, which depends on net income, which depends on interest expense. This method was chosen over the average-balance method because average debt approximations are common in simplified models. Iterative convergence resembles how Excel's iterative calculation mode resolves the same circular reference. The model feeds each iteration's calculated interest expense into the next iteration until the change between iterations is below a $0.01 tolerance (defined in module).
+
+**Revolve with automatic cash sweep.** Rather than a static debt schedule, the revolver auto-draws if projected cash falls below a defined minimum target and auto-pays with any projected excess cash.
+
+**Single opening balance source of truth.** Anchor year assumptions (cash, PP&E, common stock, etc.) line in one place. This was a design decision rather than having the assumptions be duplicated across multiple modules. This creates real coordination necessary in dynamic real-world models and reduces risk during any assumption updates.
 
 ## Architecture Components:
 
