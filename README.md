@@ -6,7 +6,7 @@ Revenue is driven bottoms-up using a volume X ASP driver formula rather than fro
 
 The model self-verifies through an automated balance check (confirms Assets = Liabilities + Equity) in every period. And a cash tie-out check confirms that independently calculated ending cash on from the cash flow statement matches the debt schedule's ending cash from its cash sweep function.
 
-##Quick Start
+## Quick Start
 
 git clone https://github.com/charlescarson17/three-statement-financial-model.git <br>
 cd three-statement-financial-model  <br>
@@ -19,7 +19,7 @@ python3 main.py  <br>
 Run the test suite: <br> 
 python3 -m pytest -v
 
-##Sample Output
+## Sample Output
 
 ![Income Statement](docs/income_statement.png)
 ![Balance Sheet](docs/balance_sheet.png)
@@ -43,10 +43,16 @@ python3 -m pytest -v
 The model is built as a procedural pipeline. Each module is a calculation function that receives the outputs of upstream modules, performs its individual contribution to the overall model, and returns a DataFrame. This concept matches how a model functions in Excel.
 
 Calculation Order:
-Opening Balances & Drivers -> Income Statement -> Working Capital -> Debt Schedule -> Equity Schedule -> Balance Sheet -> Cash Flow Statement  
+- Opening Balances & Drivers ->
+- Income Statement ->
+- Working Capital ->
+- Debt Schedule ->
+- Equity Schedule ->
+- Balance Sheet ->
+- Cash Flow Statement  
 ***All looped until interest expense converges***
 
-##Architecture Components:
+## Architecture Components:
 
 - opening_balances.py -> single source of truth for anchor year balances
 - drivers.py -> forecast assumptions (volume,      ASP, margins, DSO/DIO/DPO, rates)
@@ -60,7 +66,7 @@ Opening Balances & Drivers -> Income Statement -> Working Capital -> Debt Schedu
 - formatting.py -> terminal formatting applied to produced financial statements
 - main.py -> main entry point to run entire model
 
-##Modeling Assumptions & Limitations
+## Modeling Assumptions & Limitations
 
 **Other Current Assets and Accrued Liabilities held flat at their anchor year levels.** These balances don't scale with revenue or COGS in the same way as working capital in this model.
 
@@ -70,7 +76,7 @@ Opening Balances & Drivers -> Income Statement -> Working Capital -> Debt Schedu
 
 **Anchor year is a single historical period.** No multi-year historical reference limits any trend-based judgement.
 
-##Testing
+## Testing
 
 Run test: <br>
 python3 -m pytest -v
