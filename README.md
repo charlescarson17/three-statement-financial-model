@@ -49,7 +49,8 @@ Calculation Order:
 - Debt Schedule ->
 - Equity Schedule ->
 - Balance Sheet ->
-- Cash Flow Statement  
+- Cash Flow Statement
+
 ***All looped until interest expense converges***
 
 ## Architecture Components:
