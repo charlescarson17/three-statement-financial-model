@@ -23,7 +23,7 @@ from src.debt_schedule import build_debt_schedule
 from src.equity_schedule import build_equity_schedule
 from src.balance_sheet import build_balance_sheet, check_balance_sheet_balances
 from src.cash_flow import build_cash_flow_statement, check_cash_flow_ties_to_debt_schedule
-from src.opening_balances import compute_retained_earnings_plug
+from src.opening_balances import OPENING_BALANCES, compute_retained_earnings_plug
 
 TOLERANCE = 0.01
 MAX_ITERATIONS = 50
@@ -98,6 +98,8 @@ def run_three_statement_model(periods=PERIODS):
         "equity_schedule": equity_schedule,
         "balance_sheet": balance_sheet,
         "cash_flow_statement": cash_flow_statement,
+        "opening_balances": OPENING_BALANCES,
+        "retained_earnings_plug": retained_earnings_plug,
     }
     
 
